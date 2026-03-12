@@ -1,0 +1,17 @@
+[
+  {
+    "directory": "/home/nilay/credit-risk-project",
+    "command": "/usr/bin/clang++ -c -Wall -Wextra -std=c++17 -I src/ -I include/ src/normalizer.cc -o src/normalizer.o",
+    "file": "src/normalizer.cc"
+  },
+  {
+    "directory": "/home/nilay/credit-risk-project",
+    "command": "/usr/bin/clang++ -c -Wall -Wextra -std=c++17 -I src/ -I include/ src/matrix.cc -o src/matrix.o",
+    "file": "src/matrix.cc"
+  },
+  {
+    "directory": "/home/nilay/credit-risk-project",
+    "command": "/usr/bin/clang++ -c -Wall -Wextra -std=c++17 -I src/ -I include/ src/logistic_regression.cc -o src/logistic_regression.o",
+    "file": "src/logistic_regression.cc"
+  }
+]
