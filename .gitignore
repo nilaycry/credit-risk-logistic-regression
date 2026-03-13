@@ -65,3 +65,4 @@ experiments/*
 project_instructions.md
 report/learning_notes.md
 report/real_world_projects.md
+.cache/
