@@ -23,6 +23,15 @@ Matrix::Matrix(const std::vector<std::vector<double>>& data) {
     this->data_ = data; // Directly copy the vector data
 }
 
+std::vector<double> Matrix::getRow(int row) const {
+
+  if (row > rows_ || row < 0) {
+    throw std::runtime_error("Row index out of bound");
+  }
+  
+  return data_[row];
+}
+
 int Matrix::getRows() const { return this->rows_; }
 
 int Matrix::getCols() const { return this->cols_; }

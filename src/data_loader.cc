@@ -7,6 +7,9 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <random>
+#include <algorithm>
+#include <numeric>
 
 
 
@@ -82,7 +85,7 @@ std::tuple<Matrix, std::vector<double>> DataLoader::loadData(bool has_header) co
             // We caught a bad value! Skip this row and continue reading the CSV
             continue;
         }
-    }
+    }   
 
     Matrix X(temp_matrix);
 
@@ -106,6 +109,14 @@ std::tuple<Matrix, std::vector<double>> DataLoader::loadData(bool has_header) co
 std::tuple<Matrix, Matrix, std::vector<double>, std::vector<double>> 
         DataLoader::train_test_split(const Matrix& X, const std::vector<double>& y, double train_ratio) {
 
+    std::vector<int> indices(X.getRows());
+
+    std::iota(indices.begin(), indices.end(), 0);
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(indices.begin(), indices.end(), g);
+
     std::vector<std::vector<double>> x_test;
     std::vector<std::vector<double>> x_train;
     std::vector<double> y_train;
@@ -114,18 +125,17 @@ std::tuple<Matrix, Matrix, std::vector<double>, std::vector<double>>
     int cutoff = static_cast<int>( train_ratio * X.getRows());
 
     for (int i = 0; i < cutoff; i++) {
-        x_train.push_back(X.getRow(i));
-        y_train.push_back(y[i]);
+        x_train.push_back(X.getRow(indices[i]));
+        y_train.push_back(y[indices[i]]);
     }
 
     for(int j = cutoff; j < X.getRows(); j++) {
-        x_test.push_back(X.getRow(j));
-        y_test.push_back(y[j]); // FIXED: was previously jumping into y_train
+        x_test.push_back(X.getRow(indices[j]));
+        y_test.push_back(y[indices[j]]); 
     }
 
     Matrix X_test(x_test);
     Matrix X_train(x_train);
 
-    // FIXED: Return order now matches the header definition: X_train, X_test, y_train, y_test
     return {X_train, X_test, y_train, y_test};
 }
