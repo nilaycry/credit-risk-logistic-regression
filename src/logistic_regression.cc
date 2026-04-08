@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
+#include <cmath>
 
 
 struct EvalPair {
@@ -22,6 +23,17 @@ LogisticRegression::LogisticRegression(int numFeatures) {
   }
 
   weights_.resize(numFeatures);
+}
+
+void LogisticRegression::setRegularization(RegularizationType type, double lambda) {
+  reg_type_ = type;
+  lambda_ = lambda;
+}
+
+int LogisticRegression::sign(double w) const {
+  if (w > 0) return 1;
+  if (w < 0) return -1;
+  return 0;
 }
 
 double LogisticRegression::predict(const std::vector<double> &x) const {
@@ -64,11 +76,22 @@ void LogisticRegression::train(const std::vector<std::vector<double>> &x,
     }
 
     // Apply gradient descent step for weights (average gradient across
-    // examples)
+    // examples) with regularization
     for (size_t j = 0; j < weights_.size(); j++) {
-      weights_[j] += lr * grad_w[j] / static_cast<double>(x.size());
+      double grad = grad_w[j] / static_cast<double>(x.size());
+      
+      // Add regularization term to gradient
+      if (reg_type_ == RegularizationType::L2) {
+        // L2 regularization: add lambda * w_j to gradient
+        grad -= lambda_ * weights_[j];
+      } else if (reg_type_ == RegularizationType::L1) {
+        // L1 regularization: add lambda * sign(w_j) to gradient
+        grad -= lambda_ * sign(weights_[j]);
+      }
+      
+      weights_[j] += lr * grad;
     }
-    // Apply gradient descent step for bias
+    // Apply gradient descent step for bias (no regularization on bias)
     bias_ += lr * grad_b / static_cast<double>(x.size());
 
     // std::cout << "Epoch: " << epoch << "    Loss: " << computeLoss(x, y) <<
@@ -144,6 +167,37 @@ double LogisticRegression::computeAUC(const std::vector<std::vector<double>> &x,
   double auc = static_cast<double>(total_rankings) / static_cast<double>(total_ones * total_zeros);
 
   return auc;
+}
+
+double LogisticRegression::computeLoss(const std::vector<std::vector<double>> &x, const std::vector<double> &y) const {
+  double loss = 0.0;
+  size_t n = x.size();
+  
+  // Compute binary cross-entropy loss
+  for (size_t i = 0; i < n; i++) {
+    double p = predict(x[i]);
+    // Clip probability to avoid log(0)
+    p = std::max(std::min(p, 1.0 - 1e-15), 1e-15);
+    loss -= y[i] * std::log(p) + (1.0 - y[i]) * std::log(1.0 - p);
+  }
+  loss /= static_cast<double>(n);
+  
+  // Add regularization term to loss
+  if (reg_type_ == RegularizationType::L2) {
+    double reg_term = 0.0;
+    for (double w : weights_) {
+      reg_term += w * w;
+    }
+    loss += 0.5 * lambda_ * reg_term;
+  } else if (reg_type_ == RegularizationType::L1) {
+    double reg_term = 0.0;
+    for (double w : weights_) {
+      reg_term += std::abs(w);
+    }
+    loss += lambda_ * reg_term;
+  }
+  
+  return loss;
 }
 
 std::vector<double> LogisticRegression::getWeights() const { return weights_; }
