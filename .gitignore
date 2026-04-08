@@ -1,68 +1,27 @@
-# Compiled Object files
-*.slo
-*.lo
+```
+# Compiled and build artifacts
 *.o
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
 *.out
-*.app
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/c_cpp_properties.json
-*.code-workspace
-
-# Build directory
 build/
-bin/
+dist/
 
-# Data
-data/*.csv
-!data/.gitkeep
+# Dependencies
+venv/
+.venv/
+__pycache__/
+*.pyc
 
-# Exclude all experiment and result files except md files
-experiments/*
-!experiments/*.md
+# Logs and temp files
+*.log
+*.tmp
 
-# Agent memory/cache
-.gemini/
+# Editors
+.vscode/
+.idea/
 
-# Personal Learning Notes
-project_instructions.md
-report/learning_notes.md
-report/real_world_projects.md
-.cache/
+# Environment
+.env
+.env.local
+*.env.*
+```
